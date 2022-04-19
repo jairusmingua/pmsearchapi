@@ -1,0 +1,7 @@
+django-cors-headers==3.11.0
+django-filter==21.1
+djangorestframework==3.13.1
+pip-chill==1.0.1
+psycopg2==2.9.3
+python-dotenv==0.20.0
+ytmusicapi==0.21.0
