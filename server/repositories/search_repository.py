@@ -15,6 +15,7 @@ def search(source: str, artist: str = None,
     prefix = 'search'
     try:
         filter_source = 'YT' if source == 'SPOTIFY' else 'SPOTIFY'
+        logger.debug(f'{prefix} >> Searching From Database')
         if isrc == None:
             result = Song.objects.filter(source=filter_source, artist=artist,\
                                         title=title)\
@@ -24,9 +25,7 @@ def search(source: str, artist: str = None,
                                         title=title, isrc=isrc)\
                                  .first()
         if result:
-            logger.debug(f'{prefix} >> Searching From Database')
             return True, result
-
         logger.debug(f'{prefix} >> Searching From APIs')
     
         spotify_song: Song
@@ -56,17 +55,17 @@ def search(source: str, artist: str = None,
         if not success:
             logging.error(f'{prefix} >> {song}')
             return False, None
-  
+
         yt_song, _ = Song.objects.get_or_create(**{
-            'title': song.title,
-            'artist': song.artist,
+            'title': spotify_song.title,
+            'artist': spotify_song.artist,
             'external_id': song.external_id,
             'thumbnail_src': song.thumbnail_src,
             'isrc': spotify_song.isrc,
             'source': Song.SongSource.YT.value
         })
 
-        return True, yt_song if source == 'YT' else spotify_song
+        return True, yt_song if filter_source == 'YT' else spotify_song
     except Exception as error:
         logging.error(f'{prefix} >> {error}')
         return False, None

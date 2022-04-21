@@ -13,9 +13,9 @@ class SongAdmin(admin.ModelAdmin):
         'thumbnail_src'
     ]
     search_fields = [
-        'title',
+        'title__icontains',
         'isrc',
-        'artist',
+        'artist__icontains',
         'external_id'
     ]
     list_filter = [
