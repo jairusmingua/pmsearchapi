@@ -1,4 +1,5 @@
 import logging
+from pprint import isrecursive
 
 from server.services import (
     yt_service, 
@@ -16,6 +17,7 @@ def search(source: str, artist: str = None,
     try:
         filter_source = 'YT' if source == 'SPOTIFY' else 'SPOTIFY'
         logger.debug(f'{prefix} >> Searching From Database')
+
         if isrc == None:
             result = Song.objects.filter(source=filter_source, artist=artist,\
                                         title=title)\
@@ -35,12 +37,17 @@ def search(source: str, artist: str = None,
         spotify_song = None
         yt_song = None
 
-        success, song = spotify_service.spotify_search(isrc=isrc, artist=artist,\
-                                                       title=title)
+        success = None
+        if isrc:
+            success, song = spotify_service.spotify_search(isrc=isrc)
+
+        if not success:
+            success, song = spotify_service.spotify_search(artist=artist,\
+                                                        title=title)
         if not success:
             logging.error(f'{prefix} >> {song}')
             return False, None
-            
+
         spotify_song, _ = Song.objects.get_or_create(**{
             'title': song.title,
             'artist': song.artist,
