@@ -8,6 +8,7 @@ class SongSerializer(serializers.Serializer):
     artist = serializers.CharField()
     external_id = serializers.CharField()
     thumbnail_src = serializers.CharField()
+    isrc = serializers.CharField()
  
     def to_representation(self, instance):
         song = instance

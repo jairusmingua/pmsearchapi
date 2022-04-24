@@ -37,16 +37,15 @@ def spotify_search(isrc: str = None, artist: str = None, title: str = None):
     # artist = artist.replace('\'','') #clean titles like Boo'd to Bood
     # title = title.replace('\'','') #clean titles like Boo'd to Bood
     isrc = isrc.upper() if isrc else None
-    query = 'q='
-    query += f'isrc:{isrc}' if isrc else ''
-    query += f' artist:{artist}' if artist else '' 
-    query += f' track:{title}' if title else ''
-    encode_query = urllib.parse.quote(query, safe='=')
+    query = f'artist:{artist} track:{title}'
+    if isrc:
+        query = f'artist:{artist} track:{title} isrc:{isrc}'
 
     _, token = spotify_generate_token()
-    url = f'https://api.spotify.com/v1/search?type=track&include_external=audio&{encode_query}'
+    url = f'https://api.spotify.com/v1/search?query={query}&type=track&include_external=audio&offset=0&limit=20'
     headers = {
-        'Authorization': f'Bearer {token}'
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json'
     }
     try:
         logger.debug(f'{prefix} >> Calling Spotify Search API')

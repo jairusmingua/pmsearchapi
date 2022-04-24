@@ -19,17 +19,20 @@ def search_view(request: Request):
     title = request.query_params.get('title')
     isrc = request.query_params.get('isrc')
     source = request.query_params.get('source')
+    external_id = request.query_params.get('external_id')
     
-    success, song = search(source=source, artist=artist, title=title, isrc=isrc)
+    success, songs = search(source=source, artist=artist, 
+                            title=title, isrc=isrc, 
+                            external_id=external_id)
     if not success:
-        logger.error(f'{prefix} >> {song}')
+        logger.error(f'{prefix} >> Song Not Found')
         data = {
             'status': 'ERROR',
-            'message': 'Song not Found'
+            'message': songs
         }
         return Response(data=data, status=status.HTTP_404_NOT_FOUND)
     
-    result_data = SongSerializer(instance=song)
+    result_data = SongSerializer(instance=songs, many=True)
     data = {
         'status': 'SUCCESS',
         'result': result_data.data
