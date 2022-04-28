@@ -39,7 +39,7 @@ def spotify_search(isrc: str = None, artist: str = None, title: str = None):
     isrc = isrc.upper() if isrc else None
     query = f'artist:{artist} track:{title}'
     if isrc:
-        query = f'artist:{artist} track:{title} isrc:{isrc}'
+        query = f'isrc:{isrc}'
 
     _, token = spotify_generate_token()
     url = f'https://api.spotify.com/v1/search?query={query}&type=track&include_external=audio&offset=0&limit=20'
