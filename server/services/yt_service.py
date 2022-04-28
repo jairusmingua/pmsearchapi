@@ -26,8 +26,10 @@ def yt_search(title: str = None, artist: str = None, external_id: str = None):
                         'source': source
                     })
         else:
-            response = ytmusicapi.search(f'{title} - {artist}', filter='songs')
+            response = ytmusicapi.search(f'{title} - {artist}')
             for result in response:
+                if not result.get('videoId', None):
+                    continue
                 _title = result['title']
                 _artist = result['artists'][0]['name']
                 thumbnail_src = result['thumbnails'][0]['url']
@@ -35,7 +37,8 @@ def yt_search(title: str = None, artist: str = None, external_id: str = None):
                 source = 'YT'
                 if fuzz.ratio(str(_title).lower(), title.lower()) >= 10 and\
                 fuzz.partial_ratio(str(_title).lower(), title.lower()) >= 90 and\
-                result['category'] == 'Songs':
+                fuzz.partial_ratio(str(_artist).lower(), artist.lower()) >=90 and\
+                (result['category'] == 'Songs' or result['category'] == 'Top result'):
                     return True, Song(**{
                         'title': _title,
                         'artist': _artist,
